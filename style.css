@@ -1,0 +1,19 @@
+#contacts_table{ 
+font-weight:bold;
+font-family:Arial, Helvetica, sans-serif;
+}
+table td{
+    font-size:16px;
+}
+.table {
+   margin: auto;
+   width: 85%; 
+}
+i{
+    cursor:pointer;
+    padding-left:10px;
+}
+
+.login{
+    height: auto;
+}

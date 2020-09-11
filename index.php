@@ -19,64 +19,21 @@ $conn = OpenCon();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     
     <title>php</title>
 </head>
 <body>
-<style>
-.preview img {
-    
-}
-#contacts_table{ 
-font-weight:bold;
-font-family:Arial, Helvetica, sans-serif;
-font-size:;
-}
-table td{
-    font-size:16px;
-}
-.table {
-   margin: auto;
-   width: 85%; 
-}
-i{
-    cursor:pointer;
-    padding-left:10px;
-}
-</style>
 
 <div class="updates"></div>
     <div class="container">
         <div class="form-group"
             <br><br>
             <?php 
-                echo '<h4> Welcome '.$_SESSION['name'].' please choose a contact to display informations:</h4><br><br>';
+                echo '<h4> Welcome '.$_SESSION['name'].' all your contacts are displayed here:</h4><br><br>';
             ?>
-            <?php 
-                // if(isset($_POST['but_upload'])){
-                //     $filename = $_FILES['file']['name'];
-                //     $target_dir = "upload/";
-                //     if($filename != '' ){
-                //         $target_file = $target_dir.basename($_FILES['file']['name']);
-                //         $extension = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-                //         $extension_arr = ['jpg','jpeg','png','gif'];
-                //         if(in_array($extension,$extension_arr)){
-                //             $image_base64 = base64_encode(file_get_contents($_FILES['file']['tmp_name']));
-                //             $image = "data:image/".$extension.";base64,".$image_base64;
-                //             if(move_uploaded_file($_FILES['file']['tmp_name'], $target_file)){
-
-                //                 $query = "INSERT INTO images (contact_id,name,img_dir) values('44','$filename','$image')";
-                //                 mysqli_query($conn,$query);
-                //             }                        
-                //         }
-                //     }
-                // }
-            ?>
-            <form method="post" enctype="multipart/form-data">
-                <input type="file" name="file" id="file">
-                <!-- <input type="submit" name="but_upload" value="upload"> -->
-            </form>
          </div>
             <br>
             <div class="container">
@@ -96,14 +53,14 @@ i{
             </div>
             <div class="container" id="test">
             <?php 
-            $sql = "SELECT `Name`,`Number`,`contact_id` FROM contacts"; 
+            $sql = "SELECT `Name`,`Number`,`contact_id` FROM contacts WHERE `User_id` =".$_SESSION['id'].""; 
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
-              echo '<table class="table table-bordered" id="contacts_table"><thead class="thead-dark"><tr><th style="width:10%">image</th><th style="width:7%" scope="col">id</th><th scope="col">Name</th><th scope="col">Number</th><th style="width:20%" scope="col">Actions</th></tr></thead>';
+              echo '<table class="table table-bordered" id="contacts_table"><thead class="thead-dark"><tr><th style="width:7%" scope="col">id</th><th scope="col">Name</th><th scope="col">Number</th><th style="width:20%" scope="col">Actions</th></tr></thead>';
               // output data of each row
               while($row = $result->fetch_assoc()) {
                 $id = str_replace(' ','_',$row["Name"]);
-                echo "<tr id='".$row["contact_id"]."'><td><img src='' id='img' width='50px' height='50px'></td><td>".$row["contact_id"]."</td><td class='name'>".$row["Name"]."</td><td> ".$row["Number"]."</td><td><form method='post'><i class='fas fa-user-times prefix red-text fa-2x' id='delete'></i> <a href='' data-toggle='modal' data-target='#modalSubscriptionForm'><i class='fas fa-user-edit prefix green-text fa-2x' id='update'></i><i class='fas fa-eye fa-2x blue-text' id='upload'></i></a></form></td></tr>";
+                echo "<tr id='".$row["contact_id"]."'><td>".$row["contact_id"]."</td><td class='name'>".$row["Name"]."</td><td> ".$row["Number"]."</td><td><form method='post'><i class='fas fa-user-times prefix red-text fa-2x' id='delete'></i> <a href='' data-toggle='modal' data-target='#modalSubscriptionForm'><i class='fas fa-user-edit prefix green-text fa-2x' id='update'></a></form></td></tr>";
               }
               echo "</table>";
             } else {
@@ -139,9 +96,9 @@ i{
                         else if(clicked == 'update'){
                             
                             var id = e.target.parentNode.parentNode.parentNode.parentNode;
-                            var contact_id = $(id).find('td:first').next().text();
-                            var contact = $(id).find('td:first').next().next().text();
-                            var number = $(id).find('td:first').next().next().next().text();
+                            var contact_id = $(id).find('td:first').text();
+                            var contact = $(id).find('td:first').next().text();
+                            var number = $(id).find('td:first').next().next().text();
                             console.log(id);
 
                             var output = `<div class="modal fade" id="modalSubscriptionForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -192,11 +149,10 @@ i{
                                 contact not created please make sure to check the name and number and try again;
                             </div>`);
                         }else{
-                            
                             var obj = JSON.parse(data);
                             $('#results').html(`<div id ="alert"  class="alert alert-primary" role="alert">contact ${obj.Name} was created!!</div>`);
                             $('#contacts_table').append(`
-                            <tr id=${obj.contact_id}><td><img src='' id='img' width='50px' height='50px'></td><td>${obj.contact_id}</td><td>${obj.Name}</td><td>${obj.Number}</td><td><form method='post'><i class='fas fa-user-times prefix red-text fa-2x' id='delete'></i> <a href='' data-toggle='modal' data-target='#modalSubscriptionForm'><i class='fas fa-user-edit prefix green-text fa-2x'></i></a></form></td></tr>
+                            <tr id=${obj.contact_id}><td>${obj.contact_id}</td><td>${obj.Name}</td><td>${obj.Number}</td><td><form method='post'><i class='fas fa-user-times prefix red-text fa-2x' id='delete'></i> <a href='' data-toggle='modal' data-target='#modalSubscriptionForm'><i class='fas fa-user-edit prefix green-text fa-2x' id='update'></a></form></td></tr>
                             `)
                         };
                         
@@ -228,17 +184,17 @@ i{
                                 $('#results').html(`<div id ="alert"  class="alert alert-primary" role="alert">contact ${obj.Name} was created!!</div>`);
                                 $('#results').html(`<div id ="alert"  class="alert alert-primary" role="alert">contact was updated!!</div>`);
                                 $('#contacts_table').append(`
-                                <tr id=${obj.contact_id}><td><img src='' id='img' width='50px' height='50px'></td><td>${obj.contact_id}</td><td>${obj.Name}</td><td>${obj.Number}</td></td><td><form method='post'><i class='fas fa-user-times prefix red-text fa-2x' id='delete'></i> <a href='' data-toggle='modal' data-target='#modalSubscriptionForm'><i class='fas fa-user-edit prefix green-text fa-2x'></i></a></form></td></tr> 
+                                <tr id=${obj.contact_id}><td>${obj.contact_id}</td><td>${obj.Name}</td><td>${obj.Number}</td></td><td><form method='post'><i class='fas fa-user-times prefix red-text fa-2x' id='delete'></i> <a href='' data-toggle='modal' data-target='#modalSubscriptionForm'><i class='fas fa-user-edit prefix green-text fa-2x'></i></a></form></td></tr> 
                                 `)
                                 
                             }
                         });
-                });
-
-
-                    
-                    
+                });                     
             </script>
+            <form action="logout.php">
+                <input type="submit">
+            </form>
+            
 <!-- JQuery -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- Bootstrap tooltips -->
